@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ide__getDiagnostics",
+      "Bash(lsof:*)",
+      "Bash(curl:*)",
+      "Bash(npx next build)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(gh auth:*)",
+      "Bash(brew install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: 배부룩 맛집 지도 프로젝트\n\n- 카카오맵 기반 맛집 지도 앱\n- 마커 클릭 시 플로팅 팝업 카드 표시\n- 탭별 페이지 분리 \\(맛집 지도만 지도 표시\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
