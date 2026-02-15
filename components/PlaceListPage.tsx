@@ -1,28 +1,23 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { PlaceData } from "@/types/kakao";
-
-const categoryEmojis: Record<string, string> = {
-  "오마카세": "🍣",
-  "한식": "🍖",
-  "양식": "🍝",
-  "일식": "🍱",
-  "카페": "☕",
-};
-
-const areas = ["전체", "구로", "강남", "합정", "한남", "이태원", "성수", "을지로", "서초", "신사", "청담", "용산"];
-const categories = ["전체", "한식", "양식", "일식", "오마카세", "카페"];
+import { regions as areas, categories, getCategoryEmoji } from "@/data/constants";
 
 type SortKey = "rating" | "reviewCount" | "name";
 
 interface PlaceListPageProps {
   places: PlaceData[];
   onPlaceClick: (place: PlaceData) => void;
+  initialSearch?: string;
 }
 
-export default function PlaceListPage({ places, onPlaceClick }: PlaceListPageProps) {
-  const [search, setSearch] = useState("");
+export default function PlaceListPage({ places, onPlaceClick, initialSearch }: PlaceListPageProps) {
+  const [search, setSearch] = useState(initialSearch || "");
+
+  useEffect(() => {
+    if (initialSearch) setSearch(initialSearch);
+  }, [initialSearch]);
   const [selectedArea, setSelectedArea] = useState("전체");
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [sortBy, setSortBy] = useState<SortKey>("rating");
@@ -37,6 +32,7 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q) ||
+          p.address?.toLowerCase().includes(q) ||
           p.tags?.some((t) => t.toLowerCase().includes(q)),
       );
     }
@@ -61,13 +57,19 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
     return result;
   }, [places, search, selectedArea, selectedCategory, sortBy]);
 
+  const sortLabels: Record<SortKey, string> = {
+    rating: "별점순",
+    reviewCount: "리뷰순",
+    name: "이름순",
+  };
+
   return (
-    <div className="flex-1 overflow-y-auto bg-gray-50">
+    <div className="flex-1 overflow-y-auto bg-gray-50/50">
       <div className="max-w-[900px] mx-auto px-4 md:px-6 py-6">
         {/* 헤더 */}
-        <div className="mb-6">
-          <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 mb-1">맛집 목록</h2>
-          <p className="text-sm text-gray-500">총 {filtered.length}곳의 맛집</p>
+        <div className="mb-5">
+          <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight mb-0.5">맛집 목록</h2>
+          <p className="text-sm text-gray-400">총 <span className="font-semibold text-[#E8513D]">{filtered.length}</span>곳의 맛집</p>
         </div>
 
         {/* 검색 */}
@@ -76,36 +78,37 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="맛집 이름, 카테고리, 태그 검색"
-            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 pl-10 text-sm focus:outline-none focus:border-[#E8513D] focus:ring-1 focus:ring-[#E8513D]/20 transition-colors"
+            placeholder="맛집 이름, 카테고리, 태그, 주소 검색"
+            className="w-full bg-white rounded-xl px-4 py-3 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 transition-all placeholder:text-gray-300"
+            style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}
           />
-          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           )}
         </div>
 
         {/* 필터 + 정렬 */}
-        <div className="flex flex-col gap-3 mb-5">
+        <div className="flex flex-col gap-2.5 mb-5">
           {/* 지역 필터 */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
             {areas.map((area) => (
               <button
                 key={area}
                 onClick={() => setSelectedArea(area)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                   selectedArea === area
-                    ? "bg-[#E8513D] text-white"
-                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                    ? "bg-[#E8513D] text-white shadow-sm shadow-red-200"
+                    : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-700"
                 }`}
               >
                 {area}
@@ -120,10 +123,10 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                     selectedCategory === cat
                       ? "bg-gray-900 text-white"
-                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                      : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-700"
                   }`}
                 >
                   {cat}
@@ -131,36 +134,52 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
               ))}
             </div>
 
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortKey)}
-              className="shrink-0 bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-600 focus:outline-none"
-            >
-              <option value="rating">별점순</option>
-              <option value="reviewCount">리뷰순</option>
-              <option value="name">이름순</option>
-            </select>
+            <div className="shrink-0 flex items-center gap-1 bg-white border border-gray-200 rounded-full px-3 py-1.5">
+              <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+              </svg>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortKey)}
+                className="text-xs text-gray-600 font-medium bg-transparent focus:outline-none appearance-none pr-1 cursor-pointer"
+              >
+                <option value="rating">별점순</option>
+                <option value="reviewCount">리뷰순</option>
+                <option value="name">이름순</option>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* 목록 */}
         {filtered.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-400 text-sm">검색 결과가 없습니다</p>
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <svg className="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <p className="text-gray-400 text-sm font-medium">검색 결과가 없습니다</p>
+            <p className="text-gray-300 text-xs mt-1">다른 키워드로 검색해보세요</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {filtered.map((place) => (
+          <div className="space-y-2.5">
+            {filtered.map((place, idx) => (
               <div
                 key={place.id}
                 onClick={() => onPlaceClick(place)}
-                className="bg-white rounded-2xl border border-gray-100 p-4 cursor-pointer hover:shadow-md hover:border-gray-200 transition-all duration-200 group"
+                className="bg-white rounded-2xl p-4 cursor-pointer group transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99]"
+                style={{
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)",
+                  border: "1px solid rgba(0,0,0,0.04)",
+                  animationDelay: `${idx * 30}ms`,
+                }}
               >
                 <div className="flex items-start gap-3.5">
                   {/* 이모지 썸네일 */}
-                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 group-hover:bg-gray-50 transition-colors">
-                    <span className="text-2xl md:text-3xl">
-                      {categoryEmojis[place.category] || "🍽️"}
+                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center shrink-0 group-hover:from-orange-50 group-hover:to-red-50 transition-all duration-300">
+                    <span className="text-2xl md:text-3xl drop-shadow-sm">
+                      {getCategoryEmoji(place.category)}
                     </span>
                   </div>
 
@@ -171,25 +190,25 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
                         {place.name}
                       </h3>
                       {place.isHot && (
-                        <span className="shrink-0 text-[10px] bg-red-50 text-red-500 font-bold px-1.5 py-0.5 rounded">
+                        <span className="shrink-0 text-[10px] bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold px-1.5 py-0.5 rounded-full">
                           HOT
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-xs text-gray-500">{place.category}</span>
-                      <span className="text-gray-300">·</span>
-                      <span className="text-xs text-gray-500">{place.area}</span>
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span className="text-xs text-gray-400 font-medium">{place.category}</span>
+                      <span className="w-0.5 h-0.5 bg-gray-300 rounded-full" />
+                      <span className="text-xs text-gray-400 font-medium">{place.area}</span>
                       {place.priceRange && (
                         <>
-                          <span className="text-gray-300">·</span>
-                          <span className="text-xs text-gray-500">{place.priceRange}</span>
+                          <span className="w-0.5 h-0.5 bg-gray-300 rounded-full" />
+                          <span className="text-xs text-gray-400">{place.priceRange}</span>
                         </>
                       )}
                     </div>
 
-                    <p className="text-xs text-gray-400 line-clamp-1 mb-2">
+                    <p className="text-xs text-gray-400 line-clamp-1 mb-2 leading-relaxed">
                       {place.review}
                     </p>
 
@@ -199,7 +218,7 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
                         {place.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full"
+                            className="text-[10px] bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium"
                           >
                             #{tag}
                           </span>
@@ -211,9 +230,9 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
                   {/* 별점 & 리뷰 */}
                   <div className="text-right shrink-0">
                     {place.rating && (
-                      <div className="flex items-center gap-1 justify-end mb-0.5">
-                        <span className="text-yellow-400 text-xs">★</span>
-                        <span className="text-sm font-bold text-gray-800">{place.rating}</span>
+                      <div className="flex items-center gap-0.5 justify-end bg-yellow-50 px-2 py-0.5 rounded-full mb-1">
+                        <span className="text-yellow-500 text-[10px]">★</span>
+                        <span className="text-xs font-bold text-gray-800">{place.rating}</span>
                       </div>
                     )}
                     {place.reviewCount != null && (
@@ -222,7 +241,7 @@ export default function PlaceListPage({ places, onPlaceClick }: PlaceListPagePro
                       </p>
                     )}
                     {place.openHours && (
-                      <p className="text-[10px] text-gray-400 mt-1">{place.openHours}</p>
+                      <p className="text-[10px] text-gray-300 mt-1">{place.openHours}</p>
                     )}
                   </div>
                 </div>

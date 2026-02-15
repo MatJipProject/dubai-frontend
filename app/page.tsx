@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import KakaoMapComponent from "@/components/KakaoMap";
 import PlaceDetailCard from "@/components/PlaceDetailCard";
 import { dummyPlaces } from "@/data/dummyPlaces";
+import { regions, getCategoryEmoji } from "@/data/constants";
 import MenuRoulette from "@/components/MenuRoulette";
 import PlaceListPage from "@/components/PlaceListPage";
 import type { PlaceData } from "@/types/kakao";
@@ -17,10 +18,6 @@ const HEADER_HEIGHT = 56;
 
 const tabs = ["홈", "맛집 지도", "메뉴 추천", "맛집 목록", "마이"] as const;
 type Tab = (typeof tabs)[number];
-
-const regions = [
-  "전체", "구로", "강남", "합정", "한남", "이태원", "성수", "을지로", "서초", "신사", "청담", "용산",
-];
 
 // 히어로 슬라이드 데이터 (dummyPlaces id 참조)
 const hotPlaceConfigs = [
@@ -41,14 +38,6 @@ const menuCategories = [
   { name: "카페", emoji: "☕", color: "#60A5FA" },
   { name: "치킨", emoji: "🍗", color: "#A78BFA" },
 ];
-
-// 카테고리 이모지 맵
-function getCategoryEmoji(category: string) {
-  const map: Record<string, string> = {
-    "오마카세": "🍣", "한식": "🍖", "양식": "🍝", "일식": "🍱", "카페": "☕",
-  };
-  return map[category] || "🍽️";
-}
 
 // 지역별 필터 (API 연결 시 서버에서 처리)
 function filterByArea(places: PlaceData[], area: string) {
@@ -95,9 +84,10 @@ function useCountUp(target: number, duration: number, start: boolean) {
 
 interface HomePageProps {
   onNavigateToPlace: (place: PlaceData) => void;
+  onTabChange: (tab: Tab) => void;
 }
 
-function HomePage({ onNavigateToPlace }: HomePageProps) {
+function HomePage({ onNavigateToPlace, onTabChange }: HomePageProps) {
   const [heroVisible, setHeroVisible] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState("전체");
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
@@ -134,10 +124,13 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
   }, []);
 
   // hotPlaces를 실제 데이터에서 구성
-  const hotPlaces = hotPlaceConfigs.map((config, i) => {
-    const place = dummyPlaces.find((p) => p.id === config.placeId)!;
-    return { ...config, place, rank: i + 1 };
-  });
+  const hotPlaces = hotPlaceConfigs
+    .map((config, i) => {
+      const place = dummyPlaces.find((p) => p.id === config.placeId);
+      if (!place) return null;
+      return { ...config, place, rank: i + 1 };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
   return (
     <div className="flex-1 overflow-y-auto bg-white">
@@ -231,8 +224,11 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
       </section>
 
       {/* 섹션 2: 지역 선택 */}
-      <section className="max-w-[900px] mx-auto px-4 md:px-6 pt-6 pb-2 animate-fade-in-up animate-delay-2">
-        <p className="text-sm text-gray-600 mb-3 font-medium">아래의 정보를 골라봐요</p>
+      <section className="max-w-[900px] mx-auto px-4 md:px-6 pt-7 pb-2 animate-fade-in-up animate-delay-2">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-1 h-4 bg-[#E8513D] rounded-full" />
+          <p className="text-sm text-gray-800 font-bold">지역별 맛집 탐색</p>
+        </div>
         <div
           ref={regionScrollRef}
           className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide"
@@ -244,8 +240,8 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
               onClick={() => setSelectedRegion(region)}
               className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 selectedRegion === region
-                  ? "bg-[#E8513D] text-white shadow-md"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-[#E8513D] text-white shadow-sm shadow-red-200"
+                  : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-700"
               }`}
             >
               {region}
@@ -270,10 +266,13 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
           </h2>
 
           <div className="grid grid-cols-3 gap-x-6 gap-y-6 max-w-[400px] mx-auto">
-            {menuCategories.map((cat, i) => (
+            {menuCategories.map((cat, i) => {
+              const delayClasses = ["animate-delay-1", "animate-delay-2", "animate-delay-3", "animate-delay-1", "animate-delay-2", "animate-delay-3"];
+              return (
               <div
                 key={cat.name}
-                className={`flex flex-col items-center cursor-pointer group animate-fade-in-up animate-delay-${i < 3 ? i + 1 : i - 1}`}
+                onClick={() => onTabChange("메뉴 추천")}
+                className={`flex flex-col items-center cursor-pointer group animate-fade-in-up ${delayClasses[i]}`}
               >
                 <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/90 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
                   <span className="text-3xl md:text-4xl">{cat.emoji}</span>
@@ -282,74 +281,105 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
                   {cat.name}
                 </p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* 섹션 4: 방금 저장된 맛집 (지역 필터 연동) */}
       <section className="max-w-[900px] mx-auto px-4 md:px-6 pt-10 md:pt-14 pb-10 md:pb-16">
-        <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 text-center mb-8 md:mb-10 animate-fade-in-up">
-          방금 저장된 맛집
-        </h2>
-
-        <div className="saved-swiper animate-fade-in-up animate-delay-1">
-          <Swiper
-            modules={[Pagination, Autoplay]}
-            spaceBetween={16}
-            slidesPerView={1.2}
-            centeredSlides={false}
-            pagination={{ clickable: true }}
-            autoplay={{ delay: 4000, disableOnInteraction: false }}
-            breakpoints={{
-              480: { slidesPerView: 1.5, spaceBetween: 16 },
-              640: { slidesPerView: 2.2, spaceBetween: 20 },
-              768: { slidesPerView: 3, spaceBetween: 20 },
-            }}
-            className="pb-10"
-          >
-            {filterByArea(dummyPlaces, selectedRegion).map((place) => (
-              <SwiperSlide key={place.id}>
-                <div
-                  className="group cursor-pointer"
-                  onClick={() => onNavigateToPlace(place)}
-                >
-                  <div className="aspect-[4/3] bg-gray-200 rounded-xl overflow-hidden mb-3 relative">
-                    <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
-                      <span className="text-4xl">{getCategoryEmoji(place.category)}</span>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <p className="text-white text-xs leading-relaxed line-clamp-2">
-                        &ldquo;{place.review}&rdquo;
-                      </p>
-                    </div>
-                  </div>
-                  <div className="px-1">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-bold text-gray-800 group-hover:text-[#E8513D] transition-colors truncate">
-                        {place.name}
-                      </p>
-                      {place.rating && (
-                        <span className="text-xs text-yellow-500 font-medium shrink-0">★ {place.rating}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <p className="text-xs text-gray-500">{place.category} · {place.area}</p>
-                      {place.reviewCount && (
-                        <span className="text-[10px] text-gray-400">리뷰 {place.reviewCount.toLocaleString()}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        <div className="text-center mb-8 md:mb-10 animate-fade-in-up">
+          <p className="text-xs text-[#E8513D] font-bold tracking-widest uppercase mb-1">Recently Saved</p>
+          <h2 className="text-xl md:text-2xl font-extrabold text-gray-900">
+            방금 저장된 맛집
+          </h2>
         </div>
 
-        <div className="flex justify-center mt-4 animate-fade-in-up animate-delay-3">
-          <button className="bg-gray-900 text-white text-sm font-medium px-8 py-2.5 rounded-full hover:bg-gray-700 transition-colors">
-            view more
+        {filterByArea(dummyPlaces, selectedRegion).length === 0 ? (
+          <div className="text-center py-16 animate-fade-in-up animate-delay-1">
+            <p className="text-3xl mb-3">🍽️</p>
+            <p className="text-gray-400 text-sm">이 지역에는 아직 등록된 맛집이 없어요</p>
+            <button
+              onClick={() => setSelectedRegion("전체")}
+              className="mt-3 text-xs text-[#E8513D] font-medium hover:underline"
+            >
+              전체 보기
+            </button>
+          </div>
+        ) : (
+          <div className="saved-swiper animate-fade-in-up animate-delay-1">
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              spaceBetween={16}
+              slidesPerView={1.2}
+              centeredSlides={false}
+              pagination={{ clickable: true }}
+              autoplay={{ delay: 4000, disableOnInteraction: false }}
+              breakpoints={{
+                480: { slidesPerView: 1.5, spaceBetween: 16 },
+                640: { slidesPerView: 2.2, spaceBetween: 20 },
+                768: { slidesPerView: 3, spaceBetween: 20 },
+              }}
+              className="pb-10"
+            >
+              {filterByArea(dummyPlaces, selectedRegion).map((place) => (
+                <SwiperSlide key={place.id}>
+                  <div
+                    className="group cursor-pointer"
+                    onClick={() => onNavigateToPlace(place)}
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden mb-3 relative shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                      <div className="w-full h-full group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+                        <span className="text-4xl md:text-5xl drop-shadow-sm">{getCategoryEmoji(place.category)}</span>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <p className="text-white/90 text-xs leading-relaxed line-clamp-2 font-medium">
+                          &ldquo;{place.review}&rdquo;
+                        </p>
+                      </div>
+                      {place.isHot && (
+                        <div className="absolute top-2.5 left-2.5">
+                          <span className="text-[10px] font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 px-2 py-0.5 rounded-full">HOT</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="px-0.5">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <p className="text-sm font-bold text-gray-900 group-hover:text-[#E8513D] transition-colors truncate">
+                          {place.name}
+                        </p>
+                        {place.rating && (
+                          <div className="flex items-center gap-0.5 shrink-0 bg-yellow-50 px-1.5 py-0.5 rounded-full">
+                            <span className="text-yellow-500 text-[10px]">★</span>
+                            <span className="text-[11px] text-gray-700 font-bold">{place.rating}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs text-gray-400 font-medium">{place.category} · {place.area}</p>
+                        {place.reviewCount && (
+                          <span className="text-[10px] text-gray-300">리뷰 {place.reviewCount.toLocaleString()}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        )}
+
+        <div className="flex justify-center mt-6 animate-fade-in-up animate-delay-3">
+          <button
+            onClick={() => onTabChange("맛집 목록")}
+            className="group flex items-center gap-2 bg-gray-900 text-white text-sm font-semibold px-8 py-3 rounded-full hover:bg-gray-800 active:scale-95 transition-all shadow-sm"
+          >
+            전체 맛집 보기
+            <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
       </section>
@@ -379,7 +409,8 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
                   <div
                     key={`a-${i}`}
                     onClick={() => onNavigateToPlace(place)}
-                    className="shrink-0 w-[300px] md:w-[340px] mx-2 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    className="shrink-0 w-[300px] md:w-[340px] mx-2 bg-white rounded-2xl p-4 cursor-pointer hover:-translate-y-1 transition-all duration-300"
+                    style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.04)" }}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#E8513D] to-[#F97316] flex items-center justify-center shrink-0">
@@ -410,7 +441,8 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
                   <div
                     key={`b-${i}`}
                     onClick={() => onNavigateToPlace(place)}
-                    className="shrink-0 w-[280px] md:w-[320px] mx-2 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    className="shrink-0 w-[280px] md:w-[320px] mx-2 bg-white rounded-2xl p-4 cursor-pointer hover:-translate-y-1 transition-all duration-300"
+                    style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.04)" }}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center shrink-0">
@@ -514,10 +546,15 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
                   className="group cursor-pointer rank-card"
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
-                  <div className="bg-white rounded-2xl border border-gray-100 p-4 md:p-5 hover:shadow-md hover:border-gray-200 transition-all duration-200">
+                  <div className="bg-white rounded-2xl p-4 md:p-5 transition-all duration-200 hover:-translate-y-0.5" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.04)" }}>
                     <div className="flex items-center gap-3 md:gap-4 mb-3">
                       {/* 순위 */}
-                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+                      <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                        i === 0 ? "bg-gradient-to-br from-amber-100 to-yellow-50" :
+                        i === 1 ? "bg-gradient-to-br from-gray-100 to-slate-50" :
+                        i === 2 ? "bg-gradient-to-br from-orange-50 to-amber-50" :
+                        "bg-gray-50"
+                      }`}>
                         {i < 3 ? (
                           <span className="text-xl md:text-2xl">{medals[i]}</span>
                         ) : (
@@ -531,28 +568,28 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
                             {place.name}
                           </h3>
                           {place.isHot && (
-                            <span className="shrink-0 text-[10px] bg-red-50 text-red-500 font-bold px-1.5 py-0.5 rounded">HOT</span>
+                            <span className="shrink-0 text-[10px] bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold px-1.5 py-0.5 rounded-full">HOT</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">{place.category} · {place.area}</p>
+                        <p className="text-xs text-gray-400 font-medium">{place.category} · {place.area}</p>
                       </div>
                       {/* 별점 + 리뷰 수 */}
                       <div className="text-right shrink-0">
-                        <div className="flex items-center gap-1 justify-end">
-                          <span className="text-yellow-400 text-xs">★</span>
+                        <div className="flex items-center gap-1 justify-end bg-yellow-50 px-2 py-0.5 rounded-full mb-0.5">
+                          <span className="text-yellow-500 text-xs">★</span>
                           <span className="text-sm font-bold text-gray-800">{place.rating}</span>
                         </div>
                         <p className="text-[11px] text-gray-400">리뷰 {(place.reviewCount || 0).toLocaleString()}</p>
                       </div>
                     </div>
                     {/* 프로그레스 바 */}
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-[1.5s] ease-out ${
                           i === 0 ? "bg-gradient-to-r from-[#E8513D] to-[#F97316]" :
                           i === 1 ? "bg-gradient-to-r from-[#6366F1] to-[#8B5CF6]" :
                           i === 2 ? "bg-gradient-to-r from-[#0EA5E9] to-[#38BDF8]" :
-                          "bg-gray-300"
+                          "bg-gray-200"
                         }`}
                         style={{ width: rankReveal.revealed ? `${barWidth}%` : "0%" }}
                       />
@@ -566,12 +603,74 @@ function HomePage({ onNavigateToPlace }: HomePageProps) {
       </section>
 
       {/* 푸터 */}
-      <footer className="bg-gray-900 text-gray-500 text-center py-8 px-4">
-        <p className="text-xs">배부룩 &copy; 2025. All rights reserved.</p>
+      <footer className="bg-gray-900 text-center py-10 px-4">
+        <p className="text-lg font-black bg-gradient-to-r from-[#E8513D] to-[#F97316] bg-clip-text text-transparent mb-2">배부룩</p>
+        <p className="text-[11px] text-gray-500">큐레이팅된 서울 맛집 지도</p>
+        <p className="text-[11px] text-gray-600 mt-4">&copy; {new Date().getFullYear()} 배부룩. All rights reserved.</p>
       </footer>
     </div>
   );
 }
+
+// URL hash ↔ 탭 매핑
+const tabHashMap: Record<Tab, string> = {
+  "홈": "",
+  "맛집 지도": "map",
+  "메뉴 추천": "roulette",
+  "맛집 목록": "list",
+  "마이": "my",
+};
+const hashTabMap = Object.fromEntries(
+  Object.entries(tabHashMap).map(([k, v]) => [v, k as Tab]),
+);
+
+// 탭 SVG 아이콘 (모바일 하단 네비)
+function TabIcon({ tab, active }: { tab: Tab; active: boolean }) {
+  const cls = `w-5 h-5 ${active ? "text-[#E8513D]" : "text-gray-400"}`;
+  switch (tab) {
+    case "홈":
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={active ? 2.2 : 1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" />
+        </svg>
+      );
+    case "맛집 지도":
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={active ? 2.2 : 1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      );
+    case "메뉴 추천":
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={active ? 2.2 : 1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      );
+    case "맛집 목록":
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={active ? 2.2 : 1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+      );
+    case "마이":
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={active ? 2.2 : 1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      );
+  }
+}
+
+const tabLabels: Record<Tab, string> = {
+  "홈": "홈",
+  "맛집 지도": "지도",
+  "메뉴 추천": "추천",
+  "맛집 목록": "목록",
+  "마이": "마이",
+};
+
+const BOTTOM_NAV_HEIGHT = 56;
 
 export default function Home() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceData | null>(null);
@@ -581,17 +680,51 @@ export default function Home() {
     lng: number;
   } | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("홈");
+  const [listSearch, setListSearch] = useState("");
 
-  const handleTabChange = (tab: Tab) => {
+  // URL hash → 초기 탭 설정
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash && hashTabMap[hash]) {
+      setActiveTab(hashTabMap[hash]);
+    }
+    const onHashChange = () => {
+      const h = window.location.hash.replace("#", "");
+      if (h !== undefined && hashTabMap[h] !== undefined) {
+        setActiveTab(hashTabMap[h]);
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  const handleTabChange = useCallback((tab: Tab) => {
     setActiveTab(tab);
     setSelectedPlace(null);
-  };
+    // URL hash 업데이트
+    const hash = tabHashMap[tab];
+    window.history.replaceState(null, "", hash ? `#${hash}` : window.location.pathname);
+  }, []);
 
   // 홈에서 맛집 클릭 → 맛집지도 탭으로 이동 + 해당 위치 포커스
   const handleNavigateToPlace = useCallback((place: PlaceData) => {
     setActiveTab("맛집 지도");
     setSelectedPlace(place);
     setFocusPlace(place);
+    window.history.replaceState(null, "", "#map");
+  }, []);
+
+  // 맛집 지도 탭에서 마커 클릭
+  const handleMapPlaceClick = useCallback((place: PlaceData) => {
+    setSelectedPlace(place);
+    setFocusPlace(place);
+  }, []);
+
+  // 룰렛 결과 → 맛집 목록으로 검색
+  const handleFindPlaces = useCallback((menu: string) => {
+    setListSearch(menu);
+    setActiveTab("맛집 목록");
+    window.history.replaceState(null, "", "#list");
   }, []);
 
   useEffect(() => {
@@ -610,23 +743,17 @@ export default function Home() {
     }
   }, []);
 
-  const handleMapReady = useCallback(() => {}, []);
-
   const renderContent = () => {
     switch (activeTab) {
       case "홈":
-        return <HomePage onNavigateToPlace={handleNavigateToPlace} />;
+        return <HomePage onNavigateToPlace={handleNavigateToPlace} onTabChange={handleTabChange} />;
       case "맛집 지도":
         return (
           <div className="relative flex-1">
             <KakaoMapComponent
               places={dummyPlaces}
-              onPlaceClick={(place) => {
-                setSelectedPlace(place);
-                setFocusPlace(place);
-              }}
+              onPlaceClick={handleMapPlaceClick}
               currentLocation={currentLocation}
-              onMapReady={handleMapReady}
               focusPlace={focusPlace}
             />
             {selectedPlace && (
@@ -638,12 +765,13 @@ export default function Home() {
           </div>
         );
       case "메뉴 추천":
-        return <MenuRoulette />;
+        return <MenuRoulette onFindPlaces={handleFindPlaces} />;
       case "맛집 목록":
         return (
           <PlaceListPage
             places={dummyPlaces}
             onPlaceClick={handleNavigateToPlace}
+            initialSearch={listSearch}
           />
         );
       default:
@@ -664,42 +792,76 @@ export default function Home() {
     <main className="h-screen flex flex-col overflow-hidden">
       {/* 헤더 */}
       <header
-        className="bg-white border-b border-gray-200 shrink-0"
+        className="bg-white/80 backdrop-blur-xl border-b border-gray-100 shrink-0 relative z-50"
         style={{ height: HEADER_HEIGHT }}
       >
-        <div className="max-w-[900px] mx-auto h-full flex items-center justify-center gap-3 sm:gap-6 md:gap-10 px-4 md:px-6 relative">
+        <div className="max-w-[900px] mx-auto h-full flex items-center px-4 md:px-6">
           <h1
-            className="text-lg md:text-xl font-extrabold text-red-500 tracking-wider cursor-pointer shrink-0"
+            className="text-lg md:text-xl font-black bg-gradient-to-r from-[#E8513D] to-[#F97316] bg-clip-text text-transparent tracking-tight cursor-pointer shrink-0 select-none"
             onClick={() => handleTabChange("홈")}
           >
             배부룩
           </h1>
-          <nav className="flex items-center h-full gap-3 sm:gap-6 md:gap-10 overflow-x-auto">
+          {/* 데스크탑 탭 네비 */}
+          <nav className="hidden md:flex items-center h-full gap-1 ml-10">
             {tabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab)}
-                className={`relative h-full text-xs sm:text-[13px] md:text-[15px] font-medium transition-colors whitespace-nowrap ${
+                className={`relative h-full px-3 text-[14px] font-semibold transition-colors whitespace-nowrap ${
                   tab === activeTab
-                    ? "text-red-500"
-                    : "text-gray-500 hover:text-gray-800"
+                    ? "text-[#E8513D]"
+                    : "text-gray-400 hover:text-gray-700"
                 }`}
               >
                 {tab}
                 {tab === activeTab && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-red-500 rounded-t-full" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[3px] bg-[#E8513D] rounded-full" />
                 )}
               </button>
             ))}
           </nav>
-          <button className="absolute right-4 md:right-0 hidden sm:block text-xs text-gray-500 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors">
+          <div className="flex-1" />
+          <button className="hidden md:flex items-center gap-1.5 text-xs text-gray-500 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-3.5 py-1.5 rounded-full transition-colors font-medium">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
             로그인
           </button>
         </div>
       </header>
 
       {/* 콘텐츠 영역 */}
-      {renderContent()}
+      <div key={activeTab} className="flex-1 flex flex-col overflow-hidden tab-content-enter">
+        {renderContent()}
+      </div>
+
+      {/* 모바일 하단 네비게이션 */}
+      <nav
+        className="md:hidden bg-white/80 backdrop-blur-lg border-t border-gray-100 shrink-0 safe-area-bottom"
+        style={{ height: BOTTOM_NAV_HEIGHT }}
+      >
+        <div className="flex items-center justify-around h-full max-w-[500px] mx-auto px-2">
+          {tabs.map((tab) => {
+            const isActive = tab === activeTab;
+            return (
+              <button
+                key={tab}
+                onClick={() => handleTabChange(tab)}
+                className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full relative"
+              >
+                {isActive && (
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-[#E8513D] rounded-full" />
+                )}
+                <TabIcon tab={tab} active={isActive} />
+                <span className={`text-[10px] font-semibold transition-colors ${isActive ? "text-[#E8513D]" : "text-gray-400"}`}>
+                  {tabLabels[tab]}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
     </main>
   );
 }

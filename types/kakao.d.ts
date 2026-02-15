@@ -10,7 +10,7 @@ export interface Review {
 
 // 맛집 데이터 (API 응답 구조 대비)
 export interface PlaceData {
-  id: number | string;
+  id: string;
   name: string;
   lat: number;
   lng: number;
@@ -18,7 +18,6 @@ export interface PlaceData {
   description: string;
   address?: string;
   phone?: string;
-  distance?: string;       // 지역명 or 실제 거리
   rating?: number;         // 평균 별점
   reviewCount?: number;    // 총 리뷰 수
   review?: string;         // 대표 리뷰 (한 줄 요약)

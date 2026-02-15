@@ -7,7 +7,6 @@ interface KakaoMapComponentProps {
   places: PlaceData[];
   onPlaceClick?: (place: PlaceData) => void;
   currentLocation?: { lat: number; lng: number } | null;
-  onMapReady?: () => void;
   focusPlace?: PlaceData | null;
 }
 
@@ -44,15 +43,12 @@ export default function KakaoMapComponent({
   places,
   onPlaceClick,
   currentLocation,
-  onMapReady,
   focusPlace,
 }: KakaoMapComponentProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const currentLocationMarkerRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
-  const onMapReadyRef = useRef(onMapReady);
-  onMapReadyRef.current = onMapReady;
   const [isLoading, setIsLoading] = useState(true);
   const [mapInitialized, setMapInitialized] = useState(false);
   const [error, setError] = useState<string>("");
@@ -75,7 +71,6 @@ export default function KakaoMapComponent({
       mapInstanceRef.current = map;
       setIsLoading(false);
       setMapInitialized(true);
-      onMapReadyRef.current?.();
     } catch (err) {
       console.error("지도 생성 실패:", err);
       setError("지도를 생성할 수 없습니다.");
@@ -100,13 +95,19 @@ export default function KakaoMapComponent({
       'script[src*="dapi.kakao.com"]',
     );
     if (existingScript) {
-      // 이미 스크립트가 있으면 로드 완료를 기다림
+      // 이미 스크립트가 있으면 로드 완료를 기다림 (최대 10초)
+      let elapsed = 0;
       const checkLoaded = setInterval(() => {
+        elapsed += 100;
         if (window.kakao && window.kakao.maps) {
           clearInterval(checkLoaded);
           window.kakao.maps.load(() => {
             initializeMap();
           });
+        } else if (elapsed >= 10000) {
+          clearInterval(checkLoaded);
+          setError("카카오맵 스크립트 로드 시간이 초과되었습니다.");
+          setIsLoading(false);
         }
       }, 100);
 
@@ -233,22 +234,50 @@ export default function KakaoMapComponent({
 
       {/* 로딩 오버레이 */}
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">지도를 불러오는 중...</p>
+            <div className="w-10 h-10 mx-auto mb-3 relative">
+              <div className="absolute inset-0 rounded-full border-2 border-gray-200" />
+              <div className="absolute inset-0 rounded-full border-2 border-[#E8513D] border-t-transparent animate-spin" />
+            </div>
+            <p className="text-gray-500 text-sm font-medium">지도를 불러오는 중...</p>
           </div>
         </div>
       )}
 
+      {/* 현재 위치로 이동 버튼 */}
+      {mapInitialized && currentLocation && (
+        <button
+          onClick={() => {
+            if (mapInstanceRef.current && window.kakao) {
+              mapInstanceRef.current.setCenter(
+                new window.kakao.maps.LatLng(currentLocation.lat, currentLocation.lng)
+              );
+              mapInstanceRef.current.setLevel(4);
+            }
+          }}
+          className="absolute bottom-5 right-4 z-10 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white active:scale-90 transition-all"
+          style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)" }}
+          aria-label="현재 위치로 이동"
+        >
+          <svg className="w-5 h-5 text-[#0EA5E9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2v2m0 16v2m10-10h-2M4 12H2" />
+          </svg>
+        </button>
+      )}
+
       {/* 에러 오버레이 */}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-red-50 rounded-lg">
-          <div className="text-center p-6">
-            <p className="text-red-600 text-lg font-semibold mb-2">
-              지도 로드 실패
-            </p>
-            <p className="text-red-500 text-sm">{error}</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-red-50/80 backdrop-blur-sm">
+          <div className="text-center p-6 bg-white rounded-2xl shadow-lg mx-4 max-w-sm" style={{ border: "1px solid rgba(0,0,0,0.04)" }}>
+            <div className="w-12 h-12 mx-auto mb-3 bg-red-50 rounded-full flex items-center justify-center">
+              <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <p className="text-gray-900 text-sm font-bold mb-1">지도 로드 실패</p>
+            <p className="text-gray-500 text-xs leading-relaxed">{error}</p>
           </div>
         </div>
       )}

@@ -58,11 +58,11 @@ export default function PlaceList({ places, selectedPlace, onPlaceSelect, isSear
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="font-semibold text-lg mb-1 truncate">{place.name}</h3>
-                    {place.distance && (
+                    {place.area && (
                       <span className={`text-xs whitespace-nowrap ${
                         isSelected ? 'text-orange-100' : 'text-gray-400'
                       }`}>
-                        {place.distance}
+                        {place.area}
                       </span>
                     )}
                   </div>

@@ -17,7 +17,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '구로디지털단지 인기 막국수',
     address: '서울특별시 구로구 디지털로 300',
     phone: '02-861-5540',
-    distance: '구로',
+
     rating: 4.6,
     reviewCount: 1847,
     review: '들기름 막국수가 고소하고 면이 쫄깃해요. 점심시간엔 웨이팅 필수!',
@@ -43,7 +43,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '40년 전통 소곱창 전문',
     address: '서울특별시 구로구 새말로 97',
     phone: '02-2636-8892',
-    distance: '구로',
+
     rating: 4.7,
     reviewCount: 2341,
     review: '곱창이 통통하고 불맛이 살아있어요. 볶음밥 마무리가 핵심!',
@@ -69,7 +69,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '가산디지털단지 브런치 맛집',
     address: '서울특별시 금천구 가산디지털1로 145',
     phone: '02-862-3300',
-    distance: '구로',
+
     rating: 4.3,
     reviewCount: 567,
     review: '에그베네딕트가 진짜 맛있고 인테리어도 예뻐요. 주말 브런치 추천!',
@@ -95,7 +95,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '두꺼운 화덕 삼겹살 전문점',
     address: '서울특별시 구로구 구로중앙로 120',
     phone: '02-2060-7788',
-    distance: '구로',
+
     rating: 4.5,
     reviewCount: 1123,
     review: '삼겹살이 두껍고 화덕에서 구워서 겉바속촉! 쌈채소도 신선해요.',
@@ -121,7 +121,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '구로 가성비 초밥 맛집',
     address: '서울특별시 구로구 디지털로26길 38',
     phone: '02-830-5050',
-    distance: '구로',
+
     rating: 4.4,
     reviewCount: 892,
     review: '가성비가 미쳤어요. 런치 세트 12피스에 이 가격이면 매일 와도 됩니다.',
@@ -149,7 +149,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '합정 프리미엄 스시 오마카세',
     address: '서울특별시 마포구 양화로 45',
     phone: '02-332-0037',
-    distance: '합정',
+
     rating: 4.9,
     reviewCount: 842,
     review: '네타 하나하나가 녹아내리듯 신선해요. 샤리 온도까지 완벽한 오마카세!',
@@ -178,7 +178,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '용산 숯불 고깃집',
     address: '서울특별시 용산구 백범로99길 50',
     phone: '02-790-7070',
-    distance: '용산',
+
     rating: 4.7,
     reviewCount: 1253,
     review: '숯불향이 배어든 갈비가 미쳤어요. 된장찌개도 깊은 맛이라 같이 먹으면 최고!',
@@ -206,7 +206,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '한남동 이탈리안 파인다이닝',
     address: '서울특별시 용산구 이태원로55가길 26',
     phone: '02-795-0105',
-    distance: '한남',
+
     rating: 4.8,
     reviewCount: 567,
     review: '파스타 면의 질감이 남다르고, 소스 하나하나에 정성이 느껴지는 곳.',
@@ -234,7 +234,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '강남 정통 하카타 라멘',
     address: '서울특별시 강남구 강남대로102길 34',
     phone: '02-567-8890',
-    distance: '강남',
+
     rating: 4.5,
     reviewCount: 923,
     review: '진한 돈코츠 육수에 면 익힘까지 선택 가능! 교자도 꼭 시켜보세요.',
@@ -260,7 +260,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '서초 정통 평양냉면',
     address: '서울특별시 서초구 서초대로74길 23',
     phone: '02-585-1919',
-    distance: '서초',
+
     rating: 4.6,
     reviewCount: 1587,
     review: '육수가 깔끔하고 면이 쫄깃해요. 여름에 한 그릇이면 더위가 싹 사라져요.',
@@ -286,7 +286,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '미쉐린 2스타 한식 파인다이닝',
     address: '서울특별시 강남구 선릉로158길 11',
     phone: '02-517-4654',
-    distance: '강남',
+
     rating: 4.9,
     reviewCount: 2103,
     review: '한식의 격을 다시 느끼게 해주는 곳. 코스 하나하나가 작품이에요.',
@@ -313,7 +313,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '강남 프리미엄 돈까스',
     address: '서울특별시 강남구 테헤란로4길 31',
     phone: '02-553-7799',
-    distance: '강남',
+
     rating: 4.4,
     reviewCount: 734,
     review: '겉바속촉 그 자체! 히레까스 두께가 장난 아니고 소스도 맛있어요.',
@@ -341,7 +341,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '청담 시그니처 도넛 카페',
     address: '서울특별시 강남구 도산대로53길 15',
     phone: '02-546-1009',
-    distance: '청담',
+
     rating: 4.3,
     reviewCount: 3241,
     review: '우유크림 도넛은 무조건 먹어봐야 해요! 인테리어도 사진찍기 좋아요.',
@@ -367,7 +367,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '신사동 수제 파스타',
     address: '서울특별시 강남구 도산대로15길 32',
     phone: '02-511-3366',
-    distance: '신사',
+
     rating: 4.6,
     reviewCount: 489,
     review: '생면 파스타가 이렇게 맛있을 수 있나 싶어요. 봉골레 강력 추천!',
@@ -395,7 +395,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '을지로 감성 한식 술집',
     address: '서울특별시 중구 을지로 14길 8',
     phone: '02-2267-0903',
-    distance: '을지로',
+
     rating: 4.5,
     reviewCount: 678,
     review: '한식 안주가 기가 막히고 을지로 감성이 물씬! 막걸리랑 찰떡궁합.',
@@ -423,7 +423,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '이태원 이탈리안 레스토랑',
     address: '서울특별시 용산구 이태원로 200',
     phone: '02-797-8855',
-    distance: '이태원',
+
     rating: 4.7,
     reviewCount: 412,
     review: '트러플 리조또가 정말 진해요. 와인 페어링도 훌륭한 숨은 맛집!',
@@ -451,7 +451,7 @@ export const dummyPlaces: PlaceData[] = [
     description: '성수동 스페셜티 카페',
     address: '서울특별시 성동구 서울숲2길 32',
     phone: '02-461-2200',
-    distance: '성수',
+
     rating: 4.4,
     reviewCount: 1892,
     review: '핸드드립 커피가 정말 부드럽고, 루프탑 뷰까지 완벽한 카페!',

@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@anthropic-ai/claude-code": "^2.1.37",
     "next": "^14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
