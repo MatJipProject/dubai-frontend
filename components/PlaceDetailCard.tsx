@@ -20,20 +20,21 @@ export default function PlaceDetailCard({ place, onClose, isLoggedIn }: PlaceDet
 
   return (
     <>
-      {/* 배경 클릭 시 닫기 */}
-      <div className="absolute inset-0 z-40" onClick={onClose} />
+      {/* 배경 오버레이 */}
+      <div className="absolute inset-0 z-40 bg-black/20 md:bg-transparent" onClick={onClose} />
 
       {/* 플로팅 팝업 카드 */}
       <div
-        className="absolute left-0 right-0 bottom-0 h-[65vh] md:left-auto md:right-4 md:top-4 md:bottom-4 md:h-auto md:w-[380px] bg-white rounded-t-3xl md:rounded-2xl z-50 animate-slide-up md:animate-popup-in overflow-y-auto"
-        style={{ boxShadow: "0 -4px 40px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)" }}
+        className="absolute left-0 right-0 bottom-0 max-h-[75vh] md:left-auto md:right-4 md:top-4 md:bottom-4 md:max-h-none md:h-auto md:w-[380px] bg-white rounded-t-3xl md:rounded-2xl z-50 animate-slide-up md:animate-popup-in overflow-y-auto overscroll-contain"
+        style={{ boxShadow: "0 -4px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)" }}
         role="dialog"
         aria-label={`${place.name} 상세 정보`}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 */}
         <button
           onClick={(e) => { e.stopPropagation(); onClose(); }}
-          className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 hover:bg-gray-100 transition-all active:scale-90"
+          className="absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm border border-gray-100 hover:bg-gray-100 transition-all active:scale-90"
           aria-label="닫기"
         >
           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,8 +43,8 @@ export default function PlaceDetailCard({ place, onClose, isLoggedIn }: PlaceDet
         </button>
 
         {/* 모바일 드래그 핸들 */}
-        <div className="md:hidden flex justify-center pt-3 pb-1">
-          <div className="w-9 h-1 bg-gray-200 rounded-full" />
+        <div className="md:hidden flex justify-center pt-2.5 pb-1">
+          <div className="w-10 h-1 bg-gray-300 rounded-full" />
         </div>
 
         {/* 상단 이모지 배너 */}
@@ -221,12 +222,12 @@ export default function PlaceDetailCard({ place, onClose, isLoggedIn }: PlaceDet
 
         {/* 카카오맵 링크 */}
         {place.link && (
-          <div className="px-5 pb-5 pt-2">
+          <div className="px-5 pb-5 pt-2 safe-area-bottom">
             <a
               href={place.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full text-sm font-semibold text-white bg-gradient-to-r from-[#E8513D] to-[#F2734E] hover:from-[#d4462f] hover:to-[#e5623f] py-3 rounded-xl transition-all active:scale-[0.98] shadow-sm"
+              className="flex items-center justify-center gap-2 w-full text-sm font-semibold text-white bg-gradient-to-r from-[#E8513D] to-[#F2734E] hover:from-[#d4462f] hover:to-[#e5623f] py-3.5 rounded-xl transition-all active:scale-[0.98] shadow-sm min-h-[48px]"
               onClick={(e) => e.stopPropagation()}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -236,6 +237,9 @@ export default function PlaceDetailCard({ place, onClose, isLoggedIn }: PlaceDet
             </a>
           </div>
         )}
+
+        {/* 하단 safe area 여백 (카카오맵 링크 없을 때) */}
+        {!place.link && <div className="safe-area-bottom pb-3" />}
       </div>
     </>
   );

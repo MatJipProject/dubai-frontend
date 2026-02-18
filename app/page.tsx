@@ -118,7 +118,7 @@ export default function Home() {
         return (
           <div className="relative flex-1">
             {mapFilterRegion !== "전체" && (
-              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-md border border-gray-100">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-sm px-3 sm:px-4 py-2 rounded-full shadow-md border border-gray-100">
                 <svg className="w-3.5 h-3.5 text-[#E8513D]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -186,7 +186,7 @@ export default function Home() {
   };
 
   return (
-    <main className="h-screen flex flex-col overflow-hidden">
+    <main className="h-[100dvh] flex flex-col overflow-hidden">
       <Header
         activeTab={activeTab}
         onTabChange={handleTabChange}

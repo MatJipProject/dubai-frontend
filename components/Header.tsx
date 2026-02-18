@@ -14,16 +14,24 @@ interface HeaderProps {
 export default function Header({ activeTab, onTabChange, user, isLoggedIn }: HeaderProps) {
   return (
     <header
-      className="bg-white/80 backdrop-blur-xl border-b border-gray-100 shrink-0 relative z-50"
-      style={{ height: HEADER_HEIGHT }}
+      className="bg-white/80 backdrop-blur-xl border-b border-gray-100 shrink-0 relative z-50 safe-area-top"
+      style={{ minHeight: HEADER_HEIGHT }}
     >
-      <div className="max-w-[900px] mx-auto h-full flex items-center px-4 md:px-6">
+      <div className="max-w-[900px] mx-auto h-14 flex items-center px-4 md:px-6">
         <h1
-          className="text-lg md:text-xl font-black bg-gradient-to-r from-[#E8513D] to-[#F97316] bg-clip-text text-transparent tracking-tight cursor-pointer shrink-0 select-none"
+          className="text-lg md:text-xl font-black bg-gradient-to-r from-[#E8513D] to-[#F97316] bg-clip-text text-transparent tracking-tight cursor-pointer shrink-0 select-none min-w-[44px] min-h-[44px] flex items-center"
           onClick={() => onTabChange("홈")}
         >
           배부룩
         </h1>
+
+        {/* 모바일: 현재 탭 이름 표시 */}
+        {activeTab !== "홈" && (
+          <span className="md:hidden text-sm font-bold text-gray-800 ml-3 truncate">
+            {activeTab}
+          </span>
+        )}
+
         {/* 데스크탑 탭 네비 */}
         <nav className="hidden md:flex items-center h-full gap-1 ml-10">
           {tabs.map((tab) => (
@@ -44,6 +52,18 @@ export default function Header({ activeTab, onTabChange, user, isLoggedIn }: Hea
           ))}
         </nav>
         <div className="flex-1" />
+
+        {/* 모바일 로그인 상태 아이콘 */}
+        {isLoggedIn && user ? (
+          <button
+            onClick={() => onTabChange("마이")}
+            className="md:hidden w-8 h-8 rounded-full bg-gradient-to-br from-[#E8513D] to-[#F97316] flex items-center justify-center shrink-0"
+          >
+            <span className="text-[11px] text-white font-bold">{user.nickname.charAt(0)}</span>
+          </button>
+        ) : null}
+
+        {/* 데스크탑 로그인 */}
         {isLoggedIn && user ? (
           <button
             onClick={() => onTabChange("마이")}

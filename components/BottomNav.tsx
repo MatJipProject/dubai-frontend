@@ -1,10 +1,10 @@
 "use client";
 
-import { tabs, tabLabels, BOTTOM_NAV_HEIGHT } from "@/data/constants";
+import { tabs, tabLabels } from "@/data/constants";
 import type { Tab } from "@/data/constants";
 
 function TabIcon({ tab, active }: { tab: Tab; active: boolean }) {
-  const cls = `w-5 h-5 ${active ? "text-[#E8513D]" : "text-gray-400"}`;
+  const cls = `w-[22px] h-[22px] ${active ? "text-[#E8513D]" : "text-gray-400"}`;
   switch (tab) {
     case "홈":
       return (
@@ -48,23 +48,22 @@ interface BottomNavProps {
 export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
     <nav
-      className="md:hidden bg-white/80 backdrop-blur-lg border-t border-gray-100 shrink-0 safe-area-bottom"
-      style={{ height: BOTTOM_NAV_HEIGHT }}
+      className="md:hidden bg-white/90 backdrop-blur-lg border-t border-gray-100 shrink-0 safe-area-bottom"
     >
-      <div className="flex items-center justify-around h-full max-w-[500px] mx-auto px-2">
+      <div className="flex items-center justify-around h-14 max-w-[500px] mx-auto px-1">
         {tabs.map((tab) => {
           const isActive = tab === activeTab;
           return (
             <button
               key={tab}
               onClick={() => onTabChange(tab)}
-              className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full relative"
+              className="flex flex-col items-center justify-center flex-1 min-w-[48px] min-h-[48px] relative active:opacity-70 transition-opacity"
             >
               {isActive && (
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-[#E8513D] rounded-full" />
               )}
               <TabIcon tab={tab} active={isActive} />
-              <span className={`text-[10px] font-semibold transition-colors ${isActive ? "text-[#E8513D]" : "text-gray-400"}`}>
+              <span className={`text-[10px] font-semibold mt-0.5 transition-colors ${isActive ? "text-[#E8513D]" : "text-gray-400"}`}>
                 {tabLabels[tab]}
               </span>
             </button>

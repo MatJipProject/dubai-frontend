@@ -83,59 +83,59 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
             {hotPlaces.map((item) => (
               <SwiperSlide key={item.rank}>
                 <div
-                  className="relative min-h-[260px] md:min-h-[300px] cursor-pointer"
+                  className="relative min-h-[240px] sm:min-h-[260px] md:min-h-[300px] cursor-pointer"
                   style={{ background: `linear-gradient(to bottom right, ${item.gradientFrom}, ${item.gradientTo})` }}
                   onClick={() => onNavigateToPlace(item.place)}
                 >
                   {/* 배경 장식 */}
-                  <div className="absolute top-4 right-4 w-40 h-40 md:w-56 md:h-56 rounded-full bg-white/[0.04]" />
-                  <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/[0.04]" />
+                  <div className="absolute top-4 right-4 w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 rounded-full bg-white/[0.04]" />
+                  <div className="absolute -bottom-8 -left-8 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/[0.04]" />
 
-                  <div className="relative max-w-[900px] mx-auto px-5 md:px-8 py-7 md:py-10 h-full">
-                    <div className="flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-10 h-full">
+                  <div className="relative max-w-[900px] mx-auto px-4 sm:px-5 md:px-8 py-5 sm:py-7 md:py-10 h-full">
+                    <div className="flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-5 md:gap-10 h-full">
                       {/* 텍스트 */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-3 flex-wrap">
-                          <span className="inline-flex items-center bg-white/15 backdrop-blur-sm text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded-full tracking-wider border border-white/10">
+                        <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 flex-wrap">
+                          <span className="inline-flex items-center bg-white/15 backdrop-blur-sm text-white text-[9px] sm:text-[10px] md:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full tracking-wider border border-white/10">
                             THICKEATSCORE
                           </span>
-                          <span className="inline-flex items-center bg-white/20 text-white text-[10px] md:text-xs font-medium px-2.5 py-1 rounded-full">
+                          <span className="inline-flex items-center bg-white/20 text-white text-[9px] sm:text-[10px] md:text-xs font-medium px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
                             {item.tag}
                           </span>
                         </div>
-                        <h2 className="text-[22px] md:text-[36px] font-extrabold text-white leading-tight mb-1">
+                        <h2 className="text-[20px] sm:text-[22px] md:text-[36px] font-extrabold text-white leading-tight mb-0.5 sm:mb-1">
                           지금 가장 핫한 맛집
                         </h2>
-                        <p className="text-white/70 text-sm md:text-base mb-5">
+                        <p className="text-white/70 text-xs sm:text-sm md:text-base mb-3 sm:mb-5">
                           배부룩 큐레이팅이 들려주는 진짜 맛집
                         </p>
                         {/* 순위 + 별점 */}
-                        <div className="flex items-center gap-3">
-                          <span className="bg-white text-[#E8513D] text-xs md:text-sm font-extrabold w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-md">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <span className="bg-white text-[#E8513D] text-xs md:text-sm font-extrabold w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-md">
                             {item.rank}
                           </span>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-yellow-300 text-sm">★</span>
-                            <span className="text-white font-bold text-sm">{item.place.rating}</span>
-                            <span className="text-white/50 text-xs">({item.place.reviewCount})</span>
+                            <span className="text-yellow-300 text-xs sm:text-sm">★</span>
+                            <span className="text-white font-bold text-xs sm:text-sm">{item.place.rating}</span>
+                            <span className="text-white/50 text-[10px] sm:text-xs">({item.place.reviewCount})</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* 이미지 + 정보 카드 */}
-                      <div className="w-full md:w-[260px] shrink-0">
+                      {/* 이미지 + 정보 카드 — 모바일에서 크기 축소 */}
+                      <div className="w-full sm:w-auto md:w-[260px] shrink-0 hidden sm:block">
                         <div className="relative">
                           <div className="w-full aspect-[4/3] bg-white/15 rounded-2xl overflow-hidden backdrop-blur-sm border border-white/10">
                             <div className="w-full h-full flex items-center justify-center">
                               <span className="text-5xl md:text-7xl drop-shadow-lg">{item.emoji}</span>
                             </div>
                           </div>
-                          <div className="absolute -bottom-3 left-2 md:left-0 bg-white rounded-xl shadow-lg px-3.5 py-2.5 max-w-[210px]">
+                          <div className="absolute -bottom-3 left-2 md:left-0 bg-white rounded-xl shadow-lg px-3 sm:px-3.5 py-2 sm:py-2.5 max-w-[200px] sm:max-w-[210px]">
                             <div className="flex items-center gap-1.5 mb-0.5">
-                              <p className="text-xs font-bold text-gray-900 truncate">{item.place.name}</p>
-                              <span className="text-[10px] text-gray-400 shrink-0 bg-gray-100 px-1.5 py-0.5 rounded">{item.place.category}</span>
+                              <p className="text-[11px] sm:text-xs font-bold text-gray-900 truncate">{item.place.name}</p>
+                              <span className="text-[9px] sm:text-[10px] text-gray-400 shrink-0 bg-gray-100 px-1.5 py-0.5 rounded">{item.place.category}</span>
                             </div>
-                            <p className="text-[10px] text-gray-500 line-clamp-1">{item.place.review}</p>
+                            <p className="text-[9px] sm:text-[10px] text-gray-500 line-clamp-1">{item.place.review}</p>
                           </div>
                         </div>
                       </div>
@@ -154,14 +154,14 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
       </section>
 
       {/* 섹션 2: 지역 선택 */}
-      <section className="max-w-[900px] mx-auto px-4 md:px-6 pt-7 pb-2 animate-fade-in-up animate-delay-2">
+      <section className="max-w-[900px] mx-auto px-4 md:px-6 pt-6 sm:pt-7 pb-2 animate-fade-in-up animate-delay-2">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-1 h-4 bg-[#E8513D] rounded-full" />
           <p className="text-sm text-gray-800 font-bold">지역별 맛집 탐색</p>
         </div>
         <div
           ref={regionScrollRef}
-          className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide"
+          className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {regions.map((region) => (
@@ -173,7 +173,7 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
                   onNavigateToRegion(region);
                 }
               }}
-              className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
+              className={`shrink-0 px-4 py-2.5 rounded-full text-[13px] sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 min-h-[40px] active:scale-95 ${
                 selectedRegion === region
                   ? "bg-[#E8513D] text-white shadow-sm shadow-red-200"
                   : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-700"
@@ -195,30 +195,30 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
       <section className="mt-6 menu-crave-section relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#F97316] to-[#EA580C]" />
 
-        <div className="relative max-w-[900px] mx-auto px-4 md:px-6 py-10 md:py-14">
+        <div className="relative max-w-[900px] mx-auto px-4 md:px-6 py-8 sm:py-10 md:py-14">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <span className="text-3xl md:text-4xl">🍴</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl">🍴</span>
           </div>
-          <p className="text-center text-white/70 text-xs tracking-[0.2em] mb-1 uppercase">
+          <p className="text-center text-white/70 text-[10px] sm:text-xs tracking-[0.2em] mb-1 uppercase">
             Pasta &middot; Korean &middot; Japanese
           </p>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white text-center mb-8 md:mb-10">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white text-center mb-6 sm:mb-8 md:mb-10">
             지금 끌리는 메뉴는?
           </h2>
 
-          <div className="grid grid-cols-3 gap-x-6 gap-y-6 max-w-[400px] mx-auto">
+          <div className="grid grid-cols-3 gap-x-4 gap-y-5 sm:gap-x-6 sm:gap-y-6 max-w-[340px] sm:max-w-[400px] mx-auto">
             {menuCategories.map((cat, i) => {
               const delayClasses = ["animate-delay-1", "animate-delay-2", "animate-delay-3", "animate-delay-1", "animate-delay-2", "animate-delay-3"];
               return (
               <div
                 key={cat.name}
                 onClick={() => onTabChange("메뉴 추천")}
-                className={`flex flex-col items-center cursor-pointer group animate-fade-in-up ${delayClasses[i]}`}
+                className={`flex flex-col items-center cursor-pointer group animate-fade-in-up active:scale-95 transition-transform ${delayClasses[i]}`}
               >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/90 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
-                  <span className="text-3xl md:text-4xl">{cat.emoji}</span>
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-white/90 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                  <span className="text-2xl sm:text-3xl md:text-4xl">{cat.emoji}</span>
                 </div>
-                <p className="text-white text-xs md:text-sm font-medium mt-2 text-center">
+                <p className="text-white text-[11px] sm:text-xs md:text-sm font-medium mt-1.5 sm:mt-2 text-center">
                   {cat.name}
                 </p>
               </div>
@@ -339,7 +339,7 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
           </div>
 
           {/* 1번 줄 → */}
-          <div className="mb-4 overflow-hidden">
+          <div className="mb-3 sm:mb-4 overflow-hidden">
             <div className="marquee-track">
               {[...dummyPlaces, ...dummyPlaces].map((place, i) => {
                 const review = place.reviews?.[0];
@@ -348,7 +348,7 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
                   <div
                     key={`a-${i}`}
                     onClick={() => onNavigateToPlace(place)}
-                    className="shrink-0 w-[300px] md:w-[340px] mx-2 bg-white rounded-2xl p-4 cursor-pointer hover:-translate-y-1 transition-all duration-300"
+                    className="shrink-0 w-[260px] sm:w-[300px] md:w-[340px] mx-1.5 sm:mx-2 bg-white rounded-2xl p-3 sm:p-4 cursor-pointer hover:-translate-y-1 transition-all duration-300"
                     style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.04)" }}
                   >
                     <div className="flex items-center gap-2 mb-2">
@@ -380,7 +380,7 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
                   <div
                     key={`b-${i}`}
                     onClick={() => onNavigateToPlace(place)}
-                    className="shrink-0 w-[280px] md:w-[320px] mx-2 bg-white rounded-2xl p-4 cursor-pointer hover:-translate-y-1 transition-all duration-300"
+                    className="shrink-0 w-[240px] sm:w-[280px] md:w-[320px] mx-1.5 sm:mx-2 bg-white rounded-2xl p-3 sm:p-4 cursor-pointer hover:-translate-y-1 transition-all duration-300"
                     style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.04)" }}
                   >
                     <div className="flex items-center gap-2 mb-2">
@@ -416,17 +416,17 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
           ref={statsReveal.ref}
           className={`relative max-w-[900px] mx-auto px-4 md:px-6 py-16 md:py-24 scroll-reveal ${statsReveal.revealed ? "revealed" : ""}`}
         >
-          <p className="text-center text-[#E8513D] text-xs font-bold tracking-widest uppercase mb-2">
+          <p className="text-center text-[#E8513D] text-[10px] sm:text-xs font-bold tracking-widest uppercase mb-2">
             Baeburook in Numbers
           </p>
-          <h2 className="text-2xl md:text-4xl font-extrabold text-white text-center mb-4">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-white text-center mb-3 sm:mb-4">
             숫자로 보는 배부룩
           </h2>
-          <p className="text-center text-white/40 text-sm mb-12 md:mb-16">
+          <p className="text-center text-white/40 text-xs sm:text-sm mb-8 sm:mb-12 md:mb-16">
             매일 업데이트되는 실시간 맛집 데이터
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             {[
               { value: totalPlaces, suffix: "곳", label: "등록된 맛집", icon: "📍" },
               { value: totalReviews, suffix: "+", label: "누적 리뷰", icon: "💬", format: true },
@@ -438,18 +438,18 @@ export default function HomePage({ onNavigateToPlace, onTabChange, onNavigateToR
                 className="text-center group"
                 style={{ transitionDelay: `${i * 150}ms` }}
               >
-                <div className="text-3xl mb-3 group-hover:scale-125 transition-transform duration-300">
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3 group-hover:scale-125 transition-transform duration-300">
                   {stat.icon}
                 </div>
-                <p className="stat-number text-3xl md:text-5xl font-black text-white mb-1">
+                <p className="stat-number text-2xl sm:text-3xl md:text-5xl font-black text-white mb-1">
                   {stat.decimal
                     ? (stat.value / 10).toFixed(1)
                     : stat.format
                       ? stat.value.toLocaleString()
                       : stat.value}
-                  <span className="text-[#E8513D] text-lg md:text-2xl ml-0.5">{stat.suffix}</span>
+                  <span className="text-[#E8513D] text-sm sm:text-lg md:text-2xl ml-0.5">{stat.suffix}</span>
                 </p>
-                <p className="text-white/50 text-xs md:text-sm">{stat.label}</p>
+                <p className="text-white/50 text-[10px] sm:text-xs md:text-sm">{stat.label}</p>
               </div>
             ))}
           </div>

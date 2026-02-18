@@ -79,7 +79,7 @@ export default function PlaceListPage({ places, onPlaceClick, initialSearch }: P
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="맛집 이름, 카테고리, 태그, 주소 검색"
-            className="w-full bg-white rounded-xl px-4 py-3 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 transition-all placeholder:text-gray-300"
+            className="w-full bg-white rounded-xl px-4 py-3 pl-10 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 transition-all placeholder:text-gray-300"
             style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.06)" }}
           />
           <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,12 +100,12 @@ export default function PlaceListPage({ places, onPlaceClick, initialSearch }: P
         {/* 필터 + 정렬 */}
         <div className="flex flex-col gap-2.5 mb-5">
           {/* 지역 필터 */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             {areas.map((area) => (
               <button
                 key={area}
                 onClick={() => setSelectedArea(area)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                className={`shrink-0 px-3.5 py-2 rounded-full text-xs font-semibold transition-all duration-200 min-h-[36px] active:scale-95 ${
                   selectedArea === area
                     ? "bg-[#E8513D] text-white shadow-sm shadow-red-200"
                     : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-700"
@@ -117,13 +117,13 @@ export default function PlaceListPage({ places, onPlaceClick, initialSearch }: P
           </div>
 
           {/* 카테고리 + 정렬 */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                  className={`shrink-0 px-3.5 py-2 rounded-full text-xs font-semibold transition-all duration-200 min-h-[36px] active:scale-95 ${
                     selectedCategory === cat
                       ? "bg-gray-900 text-white"
                       : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-700"
@@ -134,7 +134,7 @@ export default function PlaceListPage({ places, onPlaceClick, initialSearch }: P
               ))}
             </div>
 
-            <div className="shrink-0 flex items-center gap-1 bg-white border border-gray-200 rounded-full px-3 py-1.5">
+            <div className="shrink-0 flex items-center gap-1 bg-white border border-gray-200 rounded-full px-3 py-2 min-h-[36px]">
               <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
               </svg>
@@ -168,17 +168,17 @@ export default function PlaceListPage({ places, onPlaceClick, initialSearch }: P
               <div
                 key={place.id}
                 onClick={() => onPlaceClick(place)}
-                className="bg-white rounded-2xl p-4 cursor-pointer group transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99]"
+                className="bg-white rounded-2xl p-3.5 sm:p-4 cursor-pointer group transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] active:bg-gray-50/50"
                 style={{
                   boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)",
                   border: "1px solid rgba(0,0,0,0.04)",
                   animationDelay: `${idx * 30}ms`,
                 }}
               >
-                <div className="flex items-start gap-3.5">
+                <div className="flex items-start gap-3">
                   {/* 이모지 썸네일 */}
-                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center shrink-0 group-hover:from-orange-50 group-hover:to-red-50 transition-all duration-300">
-                    <span className="text-2xl md:text-3xl drop-shadow-sm">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center shrink-0 group-hover:from-orange-50 group-hover:to-red-50 transition-all duration-300">
+                    <span className="text-xl sm:text-2xl md:text-3xl drop-shadow-sm">
                       {getCategoryEmoji(place.category)}
                     </span>
                   </div>

@@ -235,7 +235,7 @@ export default function KakaoMapComponent({
               mapInstanceRef.current.setLevel(4);
             }
           }}
-          className="absolute bottom-5 right-4 z-10 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white active:scale-90 transition-all"
+          className="absolute bottom-4 right-3 sm:bottom-5 sm:right-4 z-10 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white active:scale-90 transition-all"
           style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)" }}
           aria-label="현재 위치로 이동"
         >

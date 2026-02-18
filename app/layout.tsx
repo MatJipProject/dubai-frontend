@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
   },
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({
@@ -20,9 +25,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <meta name="theme-color" content="#ffffff" />
       </head>
-      <body>{children}</body>
+      <body className="overscroll-none">{children}</body>
     </html>
   );
 }

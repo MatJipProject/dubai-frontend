@@ -68,12 +68,12 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
   if (isLoggedIn && user) {
     return (
       <div className="flex-1 overflow-y-auto bg-gray-50/50">
-        <div className="max-w-[480px] mx-auto px-4 py-10">
+        <div className="max-w-[480px] mx-auto px-4 py-8 sm:py-10">
           {/* 프로필 카드 */}
-          <div className="bg-white rounded-2xl p-6 mb-4" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.04)" }}>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#E8513D] to-[#F97316] flex items-center justify-center shrink-0">
-                <span className="text-2xl text-white font-bold">{user.nickname.charAt(0)}</span>
+          <div className="bg-white rounded-2xl p-5 sm:p-6 mb-4" style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.04)" }}>
+            <div className="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#E8513D] to-[#F97316] flex items-center justify-center shrink-0">
+                <span className="text-xl sm:text-2xl text-white font-bold">{user.nickname.charAt(0)}</span>
               </div>
               <div>
                 <h2 className="text-lg font-bold text-gray-900">{user.nickname}</h2>
@@ -161,7 +161,7 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 value={loginUsername}
                 onChange={(e) => setLoginUsername(e.target.value)}
                 required
-                className="w-full bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
+                className="w-full bg-white rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
                 style={{ border: "1px solid rgba(0,0,0,0.06)" }}
                 placeholder="아이디를 입력하세요"
               />
@@ -173,7 +173,7 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 required
-                className="w-full bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
+                className="w-full bg-white rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
                 style={{ border: "1px solid rgba(0,0,0,0.06)" }}
                 placeholder="비밀번호를 입력하세요"
               />
@@ -195,7 +195,7 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 value={signupUsername}
                 onChange={(e) => setSignupUsername(e.target.value)}
                 required
-                className="w-full bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
+                className="w-full bg-white rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
                 style={{ border: "1px solid rgba(0,0,0,0.06)" }}
                 placeholder="아이디를 입력하세요"
               />
@@ -207,7 +207,7 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 value={signupPassword}
                 onChange={(e) => setSignupPassword(e.target.value)}
                 required
-                className="w-full bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
+                className="w-full bg-white rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
                 style={{ border: "1px solid rgba(0,0,0,0.06)" }}
                 placeholder="비밀번호를 입력하세요"
               />
@@ -219,7 +219,7 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 value={signupEmail}
                 onChange={(e) => setSignupEmail(e.target.value)}
                 required
-                className="w-full bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
+                className="w-full bg-white rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
                 style={{ border: "1px solid rgba(0,0,0,0.06)" }}
                 placeholder="이메일을 입력하세요"
               />
@@ -231,7 +231,7 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 value={signupBirth}
                 onChange={(e) => setSignupBirth(e.target.value)}
                 required
-                className="w-full bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 text-gray-700"
+                className="w-full bg-white rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 text-gray-700"
                 style={{ border: "1px solid rgba(0,0,0,0.06)" }}
               />
             </div>
@@ -241,7 +241,7 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 type="tel"
                 value={signupPhone}
                 onChange={(e) => setSignupPhone(e.target.value)}
-                className="w-full bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
+                className="w-full bg-white rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E8513D]/20 placeholder:text-gray-300"
                 style={{ border: "1px solid rgba(0,0,0,0.06)" }}
                 placeholder="010-1234-5678"
               />
