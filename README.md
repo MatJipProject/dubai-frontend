@@ -1,167 +1,164 @@
-# 내 주변 맛집 지도 🍽️
+# 배부룩 - 서울 맛집 지도
 
-Next.js + TypeScript + Tailwind CSS + Kakao Map API
+> 큐레이팅된 서울 맛집을 한눈에. 지도 탐색, 메뉴 추천 룰렛, 실시간 리뷰까지.
 
-현재 위치 기반으로 주변 맛집을 찾아주는 웹 애플리케이션입니다.
+**[https://www.baebulook.site](https://www.baebulook.site/)**
 
-## 🔑 카카오맵 API 키 발급 방법 (필수!)
+## Tech Stack
 
-### 1단계: 카카오 개발자 계정
+| 분류 | 기술 |
+|------|------|
+| **Framework** | Next.js 14 (App Router) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS 3.4 |
+| **Map** | Kakao Maps JavaScript SDK |
+| **Carousel** | Swiper.js 12 |
+| **Auth** | JWT (Bearer Token), localStorage |
+| **API** | REST API (`api.baebulook.site`) |
+| **Deploy** | Vercel |
 
-1. **[Kakao Developers](https://developers.kakao.com/)** 접속
-2. 카카오톡 계정으로 로그인
-3. 처음이라면 회원가입 진행
+## Architecture
 
-### 2단계: 애플리케이션 등록
-
-1. 우측 상단 **"내 애플리케이션"** 클릭
-2. **"애플리케이션 추가하기"** 클릭
-3. 정보 입력:
-   - **앱 이름**: `맛집지도` (원하는 이름)
-   - **회사명**: `개인` 또는 본인 이름
-   - **카테고리**: `라이프스타일` 선택
-4. **"저장"** 클릭
-
-### 3단계: JavaScript 키 복사
-
-1. 생성된 앱 클릭
-2. 좌측 **"앱 키"** 메뉴 클릭
-3. **"JavaScript 키"** 복사 
-   - 예: `a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6`
-
-### 4단계: 플랫폼 등록 (중요!)
-
-1. 좌측 **"플랫폼"** 메뉴 클릭
-2. **"Web 플랫폼 등록"** 클릭
-3. 사이트 도메인 입력:
-   ```
-   http://localhost:3000
-   ```
-4. **"저장"** 클릭
-
-### 5단계: 카카오 지도 활성화
-
-1. 좌측 **"제품 설정" > "Kakao 지도"** 클릭
-2. **"활성화 설정"** 탭에서 **"활성화"** 버튼 클릭
-
-### 6단계: 프로젝트에 API 키 적용 ⭐
-
-**`components/KakaoMap.tsx`** 파일을 열고:
-
-```typescript
-// 9번째 줄 근처에서 이 부분을 찾으세요:
-script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_API_KEY&autoload=false&libraries=services`;
-
-// 복사한 JavaScript 키로 교체:
-script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6&autoload=false&libraries=services`;
+```
+Single Page App (Tab-based Routing via URL Hash)
+├── 홈         (#)        → 큐레이팅 랜딩 페이지
+├── 맛집 지도   (#map)     → Kakao Maps + 마커 클러스터링
+├── 메뉴 추천   (#roulette) → SVG 룰렛 휠 애니메이션
+├── 맛집 목록   (#list)     → 검색/필터/정렬 리스트
+└── 마이        (#my)       → 인증 (로그인/회원가입/프로필)
 ```
 
-## 🚀 설치 및 실행
+### 주요 설계 결정
 
-### 1. 의존성 설치
+- **하이브리드 데이터 소스**: 홈페이지는 큐레이팅된 정적 데이터, 지도/목록은 API 연동 가능 구조
+- **컴포넌트 분리**: Header, BottomNav, 각 탭 콘텐츠를 독립 컴포넌트로 분리하여 코드 스플리팅 최적화
+- **URL Hash 라우팅**: SPA 내 탭 전환을 URL hash로 관리하여 브라우저 뒤로가기/공유 링크 지원
+- **모바일 퍼스트**: `100dvh`, safe-area-inset, touch-action 최적화, iOS 입력 확대 방지
+
+## Features
+
+### 홈페이지
+- 히어로 배너 (Swiper fade effect + 자동 재생)
+- 지역별 맛집 탐색 (클릭 시 지도 탭으로 이동 + 해당 지역 중심 좌표 계산)
+- 메뉴 카테고리 그리드
+- 저장된 맛집 캐러셀 (dynamic pagination)
+- 실시간 리뷰 무한 마퀴 (양방향)
+- 통계 카운트업 애니메이션 (Intersection Observer)
+- 주간 맛집 TOP 5 랭킹 (프로그레스 바 애니메이션)
+
+### 맛집 지도
+- Kakao Maps SDK 동적 로딩 (autoload=false)
+- 현재 위치 자동 감지 (Geolocation API)
+- 커스텀 SVG 마커 (장소/현재 위치 구분)
+- 지역 필터링 (평균 좌표 기반 자동 센터링)
+- 장소 클릭 시 상세 카드 (모바일 바텀시트 / 데스크탑 사이드패널)
+
+### 메뉴 추천 룰렛
+- SVG 기반 룰렛 휠 (카테고리별 세그먼트)
+- CSS transition 기반 스핀 애니메이션 (cubic-bezier 감속)
+- 반응형 휠 크기 (useWheelSize 훅)
+- 결과 → 맛집 목록 연계 검색
+
+### 맛집 목록
+- 실시간 검색 (이름, 카테고리, 태그, 주소)
+- 다중 필터 (지역 + 카테고리)
+- 정렬 (별점순, 리뷰순, 이름순)
+
+### 인증
+- JWT 기반 로그인/회원가입
+- localStorage 토큰 관리
+- 로그인 상태 헤더 반영
+
+## Project Structure
+
+```
+├── app/
+│   ├── layout.tsx              # RootLayout (viewport, meta, PWA)
+│   ├── page.tsx                # 탭 라우터 + 상태 관리
+│   └── globals.css             # 애니메이션, safe-area, 마퀴
+├── components/
+│   ├── Header.tsx              # 헤더 (데스크탑 탭 + 모바일 탭명)
+│   ├── BottomNav.tsx           # 모바일 하단 네비게이션
+│   ├── HomePage.tsx            # 홈 탭 (히어로, 통계, 랭킹, 리뷰)
+│   ├── KakaoMap.tsx            # 카카오맵 (마커, 포커스, 현재위치)
+│   ├── PlaceDetailCard.tsx     # 장소 상세 바텀시트/사이드패널
+│   ├── PlaceListPage.tsx       # 맛집 목록 (검색, 필터, 정렬)
+│   ├── MenuRoulette.tsx        # 메뉴 추천 룰렛
+│   ├── MyPage.tsx              # 로그인/회원가입/프로필
+│   └── StarRating.tsx          # 별점 컴포넌트
+├── hooks/
+│   ├── useAuth.ts              # 인증 상태 관리 훅
+│   ├── useWheelSize.ts         # 반응형 룰렛 크기 훅
+│   ├── useCountUp.ts           # 카운트업 애니메이션 훅
+│   └── useScrollReveal.ts      # 스크롤 트리거 애니메이션 훅
+├── data/
+│   ├── constants.ts            # 탭, 지역, 카테고리, 히어로 설정
+│   └── dummyPlaces.ts          # 큐레이팅 맛집 데이터
+├── types/
+│   ├── kakao.d.ts              # PlaceData, Review, Kakao SDK 타입
+│   └── api.ts                  # API 요청/응답 타입
+├── utils/
+│   ├── api.ts                  # API 클라이언트 (fetch wrapper)
+│   ├── mappers.ts              # API ↔ PlaceData 변환
+│   └── svg.ts                  # SVG 마커 생성 + arc 유틸
+└── tailwind.config.ts          # Tailwind 설정 (data/ 포함)
+```
+
+## Getting Started
+
+### 환경 변수 설정
+
 ```bash
+# .env.local
+NEXT_PUBLIC_KAKAO_MAP_KEY=your_kakao_javascript_key
+```
+
+> Kakao JavaScript 키는 [Kakao Developers](https://developers.kakao.com/) > 내 애플리케이션 > 앱 키에서 발급
+
+### 설치 및 실행
+
+```bash
+# 의존성 설치
 npm install
-```
 
-### 2. 개발 서버 실행
-```bash
+# 개발 서버
 npm run dev
+
+# 프로덕션 빌드
+npm run build && npm start
 ```
 
-### 3. 브라우저에서 확인
+### Kakao Maps 플랫폼 등록
+
+카카오 개발자 콘솔 > 플랫폼 > Web에 도메인 추가:
+
 ```
 http://localhost:3000
+https://www.baebulook.site
 ```
 
-**⚠️ 주의**: 처음 접속 시 브라우저에서 "위치 정보 접근 권한"을 허용해주세요!
+## Design System
 
-## ✨ 주요 기능
+| 요소 | 값 |
+|------|-----|
+| Brand Color | `#E8513D` (coral red) |
+| Gradient | `#E8513D → #F97316` |
+| Card Shadow | `0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)` |
+| Glassmorphism | `bg-white/80 backdrop-blur-xl` |
+| Border Radius | `rounded-2xl` (cards), `rounded-full` (pills) |
+| Font | System font stack (-apple-system, BlinkMacSystemFont, ...) |
 
-- 📍 **현재 위치 자동 감지** - GPS를 사용하여 내 위치 파악
-- 🗺️ **카카오맵 연동** - 실시간 지도 표시
-- 🍽️ **주변 맛집 표시** - 현재 위치 기반 맛집 마커
-- 📏 **거리 계산** - 맛집까지의 거리 표시
-- 🎨 **반응형 디자인** - 모바일/태블릿/PC 모두 지원
-- ⭐ **현재 위치 마커** - 별 모양 마커로 내 위치 표시
+## Mobile Optimization
 
-## 📁 프로젝트 구조
+- `h-[100dvh]` — 모바일 브라우저 주소창 대응
+- `viewport-fit=cover` + `safe-area-inset-*` — 노치/다이나믹 아일랜드 대응
+- `maximum-scale=1` — iOS 더블탭 줌 방지
+- `font-size: 16px` on inputs — iOS 자동 확대 방지
+- `touch-action: manipulation` — 300ms 탭 딜레이 제거
+- `-webkit-tap-highlight-color: transparent` — 탭 하이라이트 제거
+- `overscroll-behavior: none` — pull-to-refresh 간섭 방지
+- 최소 터치 타겟 44px (버튼, 네비게이션)
 
-```
-map-project/
-├── app/
-│   ├── layout.tsx          # 루트 레이아웃
-│   ├── page.tsx            # 메인 페이지 (현재 위치 감지)
-│   └── globals.css         # 전역 스타일
-├── components/
-│   ├── KakaoMap.tsx        # 카카오맵 컴포넌트 (위치 기반)
-│   └── PlaceList.tsx       # 맛집 목록 컴포넌트
-└── types/
-    └── kakao.d.ts          # 타입 정의
-```
-
-## 🎨 커스터마이징
-
-### 맛집 데이터 추가
-
-`app/page.tsx`의 `sampleRestaurants` 배열에 맛집 추가:
-
-```typescript
-{
-  id: 6,
-  name: '새로운 맛집',
-  lat: 37.5665,
-  lng: 126.9780,
-  category: '한식',  // 한식, 중식, 일식, 양식 등
-  description: '맛집 설명',
-}
-```
-
-### 카테고리 이모지 변경
-
-`components/PlaceList.tsx`의 `categoryEmojis` 수정:
-
-```typescript
-const categoryEmojis = {
-  '한식': '🍚',
-  '중식': '🥟',
-  '새카테고리': '🍕',
-};
-```
-
-## 🔧 문제 해결
-
-### ❌ 지도가 안 보이는 경우
-
-1. ✅ API 키가 올바르게 입력되었는지 확인
-2. ✅ 플랫폼에 `http://localhost:3000` 등록 확인
-3. ✅ 카카오 지도 활성화 확인
-4. ✅ 브라우저 콘솔(F12)에서 에러 확인
-
-### ❌ 위치 정보를 못 가져오는 경우
-
-1. ✅ 브라우저 설정에서 위치 권한 허용
-2. ✅ HTTPS 환경에서 실행 (로컬은 HTTP도 가능)
-3. ✅ 위치 서비스가 활성화되어 있는지 확인
-
-### ❌ 마커가 안 보이는 경우
-
-1. ✅ 위도/경도 값 확인
-2. ✅ 지도 레벨(줌) 조정
-3. ✅ 콘솔에서 JavaScript 에러 확인
-
-## 📱 브라우저 지원
-
-- Chrome (권장)
-- Safari
-- Firefox
-- Edge
-
-## 🌐 배포
-
-Vercel, Netlify 등에 배포 시:
-1. 카카오 개발자 콘솔에서 배포 도메인 추가
-2. 환경 변수로 API 키 관리 권장
-
-## 📄 라이선스
+## License
 
 MIT License
