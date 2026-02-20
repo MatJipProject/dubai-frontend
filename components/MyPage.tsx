@@ -9,9 +9,10 @@ interface MyPageProps {
   onLogin: (username: string, password: string) => Promise<void>;
   onSignup: (data: UserCreate) => Promise<void>;
   onLogout: () => void;
+  onRegisterClick?: () => void;
 }
 
-export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }: MyPageProps) {
+export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout, onRegisterClick }: MyPageProps) {
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -93,6 +94,18 @@ export default function MyPage({ user, isLoggedIn, onLogin, onSignup, onLogout }
                 </div>
               )}
             </div>
+
+            {onRegisterClick && (
+              <button
+                onClick={onRegisterClick}
+                className="w-full mt-6 py-3.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#E8513D] to-[#F97316] shadow-md shadow-red-100 flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                </svg>
+                나만의 맛집 등록하기
+              </button>
+            )}
           </div>
 
           <button

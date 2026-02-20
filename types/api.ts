@@ -81,3 +81,14 @@ export interface SearchRestaurantResponse {
   images?: string[];
   review_preview?: string;
 }
+
+export interface RestaurantCreate {
+  name: string;
+  category: string;
+  address: string;
+  road_address?: string;
+  phone?: string;
+  latitude: number;
+  longitude: number;
+  description?: string;
+}

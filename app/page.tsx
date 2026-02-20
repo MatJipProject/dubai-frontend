@@ -7,6 +7,7 @@ import MenuRoulette from "@/components/MenuRoulette";
 import PlaceListPage from "@/components/PlaceListPage";
 import HomePage from "@/components/HomePage";
 import MyPage from "@/components/MyPage";
+import PlaceRegisterPage from "@/components/PlaceRegisterPage";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import { dummyPlaces } from "@/data/dummyPlaces";
@@ -158,7 +159,15 @@ export default function Home() {
           <PlaceListPage
             places={dummyPlaces}
             onPlaceClick={handleNavigateToPlace}
+            onRegisterClick={() => handleTabChange("맛집 등록")}
             initialSearch={listSearch}
+          />
+        );
+      case "맛집 등록":
+        return (
+          <PlaceRegisterPage
+            onSuccess={() => handleTabChange("맛집 목록")}
+            onCancel={() => handleTabChange("홈")}
           />
         );
       case "마이":
@@ -169,6 +178,7 @@ export default function Home() {
             onLogin={auth.login}
             onSignup={auth.signup}
             onLogout={auth.logout}
+            onRegisterClick={() => handleTabChange("맛집 등록")}
           />
         );
       default:

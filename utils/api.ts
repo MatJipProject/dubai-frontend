@@ -2,6 +2,7 @@ import type {
   RestaurantNearbyResponse,
   RestaurantDetailResponse,
   SearchRestaurantResponse,
+  RestaurantCreate,
   TokenResponse,
   UserResponse,
   ReviewResponse,
@@ -91,6 +92,30 @@ export async function getRestaurantDetail(
   return apiFetch<RestaurantDetailResponse>(
     `/api/v1/restaurants/${restaurantId}`,
   );
+}
+
+export async function createRestaurant(
+  data: RestaurantCreate,
+  files?: File[],
+): Promise<RestaurantDetailResponse> {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("category", data.category);
+  formData.append("address", data.address);
+  if (data.road_address) formData.append("road_address", data.road_address);
+  if (data.phone) formData.append("phone", data.phone);
+  formData.append("latitude", String(data.latitude));
+  formData.append("longitude", String(data.longitude));
+  if (data.description) formData.append("description", data.description);
+
+  if (files) {
+    files.forEach((file) => formData.append("files", file));
+  }
+
+  return apiFetch<RestaurantDetailResponse>("/api/v1/restaurants/register", {
+    method: "POST",
+    body: formData,
+  });
 }
 
 // ── 인증 API ──

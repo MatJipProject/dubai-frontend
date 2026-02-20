@@ -9,10 +9,11 @@ type SortKey = "rating" | "reviewCount" | "name";
 interface PlaceListPageProps {
   places: PlaceData[];
   onPlaceClick: (place: PlaceData) => void;
+  onRegisterClick?: () => void;
   initialSearch?: string;
 }
 
-export default function PlaceListPage({ places, onPlaceClick, initialSearch }: PlaceListPageProps) {
+export default function PlaceListPage({ places, onPlaceClick, onRegisterClick, initialSearch }: PlaceListPageProps) {
   const [search, setSearch] = useState(initialSearch || "");
 
   useEffect(() => {
@@ -250,6 +251,19 @@ export default function PlaceListPage({ places, onPlaceClick, initialSearch }: P
           </div>
         )}
       </div>
+
+      {/* 맛집 등록 FAB */}
+      {onRegisterClick && (
+        <button
+          onClick={onRegisterClick}
+          className="fixed right-5 bottom-20 md:right-10 md:bottom-10 w-14 h-14 bg-gradient-to-r from-[#E8513D] to-[#F97316] text-white rounded-full shadow-lg shadow-[#E8513D]/40 flex items-center justify-center active:scale-95 transition-all z-30"
+          title="맛집 등록"
+        >
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
