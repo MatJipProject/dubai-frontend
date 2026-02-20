@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { categories } from "@/data/constants";
 import { createRestaurant } from "@/utils/api";
 import type { RestaurantCreate } from "@/types/api";
