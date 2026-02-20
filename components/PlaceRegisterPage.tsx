@@ -32,6 +32,18 @@ export default function PlaceRegisterPage({ onSuccess, onCancel }: PlaceRegister
   const [previews, setPreviews] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // 컴포넌트 마운트 시 애니메이션 효과를 위해 약간의 지연 후 표시
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(onCancel, 300); // 애니메이션 시간 대기
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -114,18 +126,36 @@ export default function PlaceRegisterPage({ onSuccess, onCancel }: PlaceRegister
   };
 
   return (
-    <div className="flex-1 bg-white flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <button onClick={onCancel} className="p-2 -ml-2 text-gray-400">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-        <h2 className="text-lg font-bold text-gray-800">새 맛집 등록</h2>
-        <div className="w-10" />
-      </div>
+    <div className={`fixed inset-0 z-[100] transition-all duration-300 ease-out ${isVisible ? "visible" : "invisible"}`}>
+      {/* 백드롭 */}
+      <div 
+        className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`} 
+        onClick={handleClose}
+      />
+      
+      {/* 바텀 시트 */}
+      <div 
+        className={`absolute bottom-0 left-0 right-0 max-w-[500px] mx-auto bg-white rounded-t-[24px] shadow-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden ${
+          isVisible ? "translate-y-0" : "translate-y-full"
+        }`}
+        style={{ height: "90dvh" }}
+      >
+        {/* 상단 핸들 */}
+        <div className="flex justify-center pt-3 pb-1 shrink-0">
+          <div className="w-10 h-1.5 bg-gray-200 rounded-full" />
+        </div>
 
-      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 space-y-5">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
+          <button onClick={handleClose} className="p-2 -ml-2 text-gray-400">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <h2 className="text-lg font-bold text-gray-800">새 맛집 등록</h2>
+          <div className="w-10" />
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 space-y-5">
         <div className="space-y-1.5">
           <label className="text-sm font-bold text-gray-700">식당 이름 *</label>
           <input
@@ -247,5 +277,6 @@ export default function PlaceRegisterPage({ onSuccess, onCancel }: PlaceRegister
         </div>
       </form>
     </div>
+  </div>
   );
 }

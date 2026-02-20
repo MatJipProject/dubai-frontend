@@ -6,7 +6,7 @@ export const HEADER_HEIGHT = 56;
 export const BOTTOM_NAV_HEIGHT = 56;
 
 // ── 탭 ──
-export const tabs = ["홈", "맛집 지도", "메뉴 추천", "맛집 목록", "맛집 등록", "마이"] as const;
+export const tabs = ["홈", "맛집 지도", "메뉴 추천", "맛집 목록", "마이"] as const;
 export type Tab = (typeof tabs)[number];
 
 export const tabHashMap: Record<Tab, string> = {
@@ -14,7 +14,6 @@ export const tabHashMap: Record<Tab, string> = {
   "맛집 지도": "map",
   "메뉴 추천": "roulette",
   "맛집 목록": "list",
-  "맛집 등록": "register",
   "마이": "my",
 };
 
@@ -27,7 +26,6 @@ export const tabLabels: Record<Tab, string> = {
   "맛집 지도": "지도",
   "메뉴 추천": "추천",
   "맛집 목록": "목록",
-  "맛집 등록": "등록",
   "마이": "마이",
 };
 

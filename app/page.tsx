@@ -31,6 +31,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("홈");
   const [listSearch, setListSearch] = useState("");
   const [mapFilterRegion, setMapFilterRegion] = useState("전체");
+  const [showRegister, setShowRegister] = useState(false);
 
   // 인증 상태
   const auth = useAuth();
@@ -159,15 +160,8 @@ export default function Home() {
           <PlaceListPage
             places={dummyPlaces}
             onPlaceClick={handleNavigateToPlace}
-            onRegisterClick={() => handleTabChange("맛집 등록")}
+            onRegisterClick={() => setShowRegister(true)}
             initialSearch={listSearch}
-          />
-        );
-      case "맛집 등록":
-        return (
-          <PlaceRegisterPage
-            onSuccess={() => handleTabChange("맛집 목록")}
-            onCancel={() => handleTabChange("홈")}
           />
         );
       case "마이":
@@ -178,7 +172,7 @@ export default function Home() {
             onLogin={auth.login}
             onSignup={auth.signup}
             onLogout={auth.logout}
-            onRegisterClick={() => handleTabChange("맛집 등록")}
+            onRegisterClick={() => setShowRegister(true)}
           />
         );
       default:
@@ -207,6 +201,30 @@ export default function Home() {
         {renderContent()}
       </div>
       <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+
+      {/* 전역 맛집 등록 FAB (홈, 지도, 목록 탭에서 표시) */}
+      {(activeTab === "홈" || activeTab === "맛집 지도" || activeTab === "맛집 목록") && !showRegister && (
+        <button
+          onClick={() => setShowRegister(true)}
+          className="fixed right-5 bottom-20 md:right-10 md:bottom-10 w-14 h-14 bg-gradient-to-r from-[#E8513D] to-[#F97316] text-white rounded-full shadow-lg shadow-[#E8513D]/40 flex items-center justify-center active:scale-95 transition-all z-40"
+          title="맛집 등록"
+        >
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      )}
+
+      {/* 맛집 등록 바텀 시트 모달 */}
+      {showRegister && (
+        <PlaceRegisterPage
+          onSuccess={() => {
+            setShowRegister(false);
+            if (activeTab !== "맛집 목록") handleTabChange("맛집 목록");
+          }}
+          onCancel={() => setShowRegister(false)}
+        />
+      )}
     </main>
   );
 }
