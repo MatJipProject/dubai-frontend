@@ -98,23 +98,30 @@ export async function createRestaurant(
   data: RestaurantCreate,
   files?: File[],
 ): Promise<RestaurantDetailResponse> {
-  const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("category", data.category);
-  formData.append("address", data.address);
-  if (data.road_address) formData.append("road_address", data.road_address);
-  if (data.phone) formData.append("phone", data.phone);
-  formData.append("latitude", String(data.latitude));
-  formData.append("longitude", String(data.longitude));
-  if (data.description) formData.append("description", data.description);
+  // 파일이 있는 경우 FormData 사용
+  if (files && files.length > 0) {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("category", data.category);
+    formData.append("address", data.address);
+    if (data.road_address) formData.append("road_address", data.road_address);
+    if (data.phone) formData.append("phone", data.phone);
+    formData.append("latitude", String(data.latitude));
+    formData.append("longitude", String(data.longitude));
+    if (data.description) formData.append("description", data.description);
 
-  if (files) {
     files.forEach((file) => formData.append("files", file));
+
+    return apiFetch<RestaurantDetailResponse>("/api/v1/restaurants", {
+      method: "POST",
+      body: formData,
+    });
   }
 
-  return apiFetch<RestaurantDetailResponse>("/api/v1/restaurants/register", {
+  // 파일이 없는 경우 일반 JSON 사용 (서버에 따라 더 안정적일 수 있음)
+  return apiFetch<RestaurantDetailResponse>("/api/v1/restaurants", {
     method: "POST",
-    body: formData,
+    body: JSON.stringify(data),
   });
 }
 
@@ -159,17 +166,22 @@ export async function createReview(
   data: { restaurant_id: number; rating: number; content: string },
   files?: File[],
 ): Promise<ReviewResponse> {
-  const formData = new FormData();
-  formData.append("restaurant_id", String(data.restaurant_id));
-  formData.append("rating", String(data.rating));
-  formData.append("content", data.content);
+  if (files && files.length > 0) {
+    const formData = new FormData();
+    formData.append("restaurant_id", String(data.restaurant_id));
+    formData.append("rating", String(data.rating));
+    formData.append("content", data.content);
 
-  if (files) {
     files.forEach((file) => formData.append("files", file));
+
+    return apiFetch<ReviewResponse>("/api/v1/reviews", {
+      method: "POST",
+      body: formData,
+    });
   }
 
-  return apiFetch<ReviewResponse>("/api/v1/reviews/register", {
+  return apiFetch<ReviewResponse>("/api/v1/reviews", {
     method: "POST",
-    body: formData,
+    body: JSON.stringify(data),
   });
 }
