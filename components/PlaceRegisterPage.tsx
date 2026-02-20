@@ -33,6 +33,40 @@ export default function PlaceRegisterPage({ onSuccess, onCancel }: PlaceRegister
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [sdkLoaded, setSdkLoaded] = useState(false);
+
+  // 카카오 SDK 로드 상태 확인 및 로드
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const initSdk = () => {
+      window.kakao.maps.load(() => {
+        setSdkLoaded(true);
+      });
+    };
+
+    if (window.kakao && window.kakao.maps) {
+      initSdk();
+    } else {
+      const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
+      if (!existingScript) {
+        const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+        const script = document.createElement("script");
+        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=services`;
+        script.async = true;
+        script.onload = initSdk;
+        document.head.appendChild(script);
+      } else {
+        // 이미 스크립트가 로딩 중인 경우 체크
+        const checkInterval = setInterval(() => {
+          if (window.kakao && window.kakao.maps) {
+            clearInterval(checkInterval);
+            initSdk();
+          }
+        }, 100);
+      }
+    }
+  }, []);
 
   // 컴포넌트 마운트 시 애니메이션 효과를 위해 약간의 지연 후 표시
   useEffect(() => {
@@ -67,7 +101,15 @@ export default function PlaceRegisterPage({ onSuccess, onCancel }: PlaceRegister
 
   // 주소 검색 핸들러
   const handleAddressSearch = () => {
-    if (typeof window === "undefined" || !window.daum) return;
+    if (typeof window === "undefined" || !window.daum) {
+      alert("주소 검색 스크립트를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
+    if (!sdkLoaded || !window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+      alert("카카오 지도를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
 
     new window.daum.Postcode({
       oncomplete: (data: any) => {
